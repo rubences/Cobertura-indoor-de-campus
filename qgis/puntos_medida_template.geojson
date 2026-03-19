@@ -1,0 +1,75 @@
+{
+  "type": "FeatureCollection",
+  "name": "puntos_medida_template",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "LOCAL_CS[\"Plano_local_edificio\"]"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id_punto": "P1",
+        "nombre": "Entrada principal",
+        "nivel": "Planta baja",
+        "uso": "Entrada",
+        "z_m": 1.5,
+        "dist_horizontal_m": 180,
+        "fachada_db": 14,
+        "paredes_db": 0,
+        "forjados_db": 0,
+        "extra_db": 0,
+        "servicio_objetivo": "Voz y datos basicos",
+        "observaciones": "Validar fachada real y acceso principal"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [3.0, 3.0]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id_punto": "P2",
+        "nombre": "Aula 2a planta",
+        "nivel": "Segunda planta",
+        "uso": "Aula",
+        "z_m": 8.5,
+        "dist_horizontal_m": 170,
+        "fachada_db": 16,
+        "paredes_db": 4,
+        "forjados_db": 15,
+        "extra_db": 0,
+        "servicio_objetivo": "Voz y datos basicos",
+        "observaciones": "Revisar distribucion interior y forjados"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [8.2, 7.0]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id_punto": "P3",
+        "nombre": "Archivo semisotano",
+        "nivel": "Semisotano tecnico",
+        "uso": "Archivo",
+        "z_m": -2.5,
+        "dist_horizontal_m": 185,
+        "fachada_db": 18,
+        "paredes_db": 8,
+        "forjados_db": 18,
+        "extra_db": 6,
+        "servicio_objetivo": "Voz y datos basicos",
+        "observaciones": "Posible candidato a refuerzo indoor"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [8.8, 1.0]
+      }
+    }
+  ]
+}

@@ -25,6 +25,7 @@ El alumno debe estimar si la cobertura macro exterior es suficiente en distintos
 
 El repositorio incluye el notebook [ejercicio_cobertura_indoor.ipynb](ejercicio_cobertura_indoor.ipynb), que contiene:
 
+- Portada de practica con nombre, fecha, asignatura y cuadro de firmas.
 - Definicion de tres puntos de usuario: entrada, aula de segunda planta y archivo en semisotano.
 - Calculo de perdidas exteriores e interiores.
 - Verificacion contra umbrales de servicio para voz y datos basicos.
@@ -39,8 +40,9 @@ Se incluye material fuente para trasladar el caso a un plano real en QGIS:
 
 - [qgis/guia_qgis_plano_real.md](qgis/guia_qgis_plano_real.md)
 - [qgis/puntos_medida_template.csv](qgis/puntos_medida_template.csv)
+- [qgis/puntos_medida_template.geojson](qgis/puntos_medida_template.geojson)
 
-Este material permite importar una capa base de puntos de medida, mantener la trazabilidad de P1, P2 y P3 y componer una entrega mas formal sobre plano georreferenciado o plano local.
+Este material permite importar una capa base de puntos de medida en CSV o GeoJSON, mantener la trazabilidad de P1, P2 y P3 y componer una entrega mas formal sobre plano georreferenciado o plano local.
 
 ## Flujo de trabajo recomendado
 

@@ -7,6 +7,7 @@ Usar un plano real del edificio en QGIS para ubicar los puntos P1, P2 y P3 y doc
 ## Material fuente incluido
 
 - `puntos_medida_template.csv`: plantilla editable para importar puntos en QGIS.
+- `puntos_medida_template.geojson`: alternativa vectorial lista para abrir directamente en QGIS.
 
 ## Flujo recomendado
 
@@ -15,8 +16,10 @@ Usar un plano real del edificio en QGIS para ubicar los puntos P1, P2 y P3 y doc
 3. Definir un sistema de referencia adecuado:
    - Si es un plano local de edificio, puede usarse un sistema local cartesiano.
    - Si el edificio ya esta en cartografia campus, usar el CRS del proyecto institucional.
-4. Cargar `puntos_medida_template.csv` como capa de texto delimitado.
-5. Asignar las columnas `x_m` e `y_m` como coordenadas del punto.
+4. Elegir uno de los dos formatos fuente:
+   - CSV si se quiere editar rapidamente en hoja de calculo antes de importar.
+   - GeoJSON si se quiere abrir directamente como capa vectorial con atributos.
+5. Si se usa CSV, asignar las columnas `x_m` e `y_m` como coordenadas del punto.
 6. Revisar que los puntos P1, P2 y P3 coincidan con entrada, aula y semisotano reales.
 7. Completar o corregir atributos de perdidas por tramo con datos reales de obra.
 8. Simbolizar la capa por tipo de punto o por estado de cobertura.
