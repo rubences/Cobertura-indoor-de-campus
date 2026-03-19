@@ -1,0 +1,4 @@
+punto,L_ext_db,L_fachada_db,L_paredes_db,L_forjados_db,L_extra_db,L_total_db,P_rx_dbm,estado,recomendacion
+Entrada principal,114.9,14,0,0,0,128.9,-70.9,Cumple voz y datos basicos,Macro suficiente
+Aula 2a planta,109.7,16,4,15,0,144.7,-86.7,Cumple voz y datos basicos,Macro suficiente para el objetivo base
+Archivo semisotano,117.8,18,8,18,6,167.8,-109.8,No cumple objetivo,Refuerzo indoor necesario: small cell o DAS; repetidor solo si la senal donante es estable

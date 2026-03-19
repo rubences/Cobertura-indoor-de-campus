@@ -1,0 +1,4 @@
+punto,P_rx_dbm,estado,recomendacion
+Entrada principal,-70.9,Cumple voz y datos basicos,Macro suficiente
+Aula 2a planta,-86.7,Cumple voz y datos basicos,Macro suficiente para el objetivo base
+Archivo semisotano,-109.8,No cumple objetivo,Refuerzo indoor necesario: small cell o DAS; repetidor solo si la senal donante es estable
