@@ -29,9 +29,18 @@ El repositorio incluye el notebook [ejercicio_cobertura_indoor.ipynb](ejercicio_
 - Calculo de perdidas exteriores e interiores.
 - Verificacion contra umbrales de servicio para voz y datos basicos.
 - Tabla de perdidas por tramo.
-- Croquis simplificado del edificio con puntos de medida.
+- Plantilla formal de croquis para entrega docente.
 - Recomendacion final sobre macro suficiente o necesidad de refuerzo indoor.
 - Comparativa opcional por banda.
+
+## Material para QGIS
+
+Se incluye material fuente para trasladar el caso a un plano real en QGIS:
+
+- [qgis/guia_qgis_plano_real.md](qgis/guia_qgis_plano_real.md)
+- [qgis/puntos_medida_template.csv](qgis/puntos_medida_template.csv)
+
+Este material permite importar una capa base de puntos de medida, mantener la trazabilidad de P1, P2 y P3 y componer una entrega mas formal sobre plano georreferenciado o plano local.
 
 ## Flujo de trabajo recomendado
 
@@ -49,11 +58,13 @@ Ejecucion del ejercicio:
 
 ## Salidas esperadas al ejecutar el notebook
 
-Se crea la carpeta `salidas` con:
+Al ejecutar el notebook se crea la carpeta `salidas` con:
 
 - `tabla_perdidas_lte1800.csv`
 - `comparativa_bandas.csv`
 - `resumen_recomendaciones.csv`
+
+Estas salidas son artefactos generados y no se versionan en Git. El repositorio conserva solo el material fuente.
 
 ## Criterio de interpretacion
 

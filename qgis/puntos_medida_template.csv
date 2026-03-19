@@ -1,0 +1,4 @@
+id_punto,nombre,nivel,uso,x_m,y_m,z_m,dist_horizontal_m,fachada_db,paredes_db,forjados_db,extra_db,servicio_objetivo,observaciones
+P1,Entrada principal,Planta baja,Entrada,3.0,3.0,1.5,180,14,0,0,0,Voz y datos basicos,Validar fachada real y acceso principal
+P2,Aula 2a planta,Segunda planta,Aula,8.2,7.0,8.5,170,16,4,15,0,Voz y datos basicos,Revisar distribucion interior y forjados
+P3,Archivo semisotano,Semisotano tecnico,Archivo,8.8,1.0,-2.5,185,18,8,18,6,Voz y datos basicos,Posible candidato a refuerzo indoor
