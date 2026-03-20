@@ -1,0 +1,310 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="main-content">
+    <section class="intro">
+        <h2>Calculador de Cobertura Indoor</h2>
+        <p>Define los parámetros de tu edificio y obtén el resultado de cobertura en tiempo real.</p>
+    </section>
+
+    <div class="form-container">
+        <form id="coverageForm">
+            <section class="form-section">
+                <h3>Configuración General</h3>
+                <div class="form-group">
+                    <label for="numPoints">Número de puntos de medida:</label>
+                    <select id="numPoints" name="num_points">
+                        <option value="2">2</option>
+                        <option value="3" selected>3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                    </select>
+                </div>
+            </section>
+
+            <section class="form-section">
+                <h3>Puntos de Medida</h3>
+                <div id="pointsContainer"></div>
+            </section>
+
+            <section class="form-section">
+                <h3>Bandas de Frecuencia</h3>
+                <div class="bands-grid">
+                    <div class="form-group">
+                        <input type="checkbox" name="banda_LTE 1800" id="banda_lte1800" checked>
+                        <label for="banda_lte1800">LTE 1800 MHz (Portadora Base)</label>
+                    </div>
+                    <div class="form-group">
+                        <input type="checkbox" name="banda_UMTS 2100" id="banda_umts2100" checked>
+                        <label for="banda_umts2100">UMTS 2100 MHz (Respaldo)</label>
+                    </div>
+                    <div class="form-group">
+                        <input type="checkbox" name="banda_LTE 800" id="banda_lte800">
+                        <label for="banda_lte800">LTE 800 MHz</label>
+                    </div>
+                    <div class="form-group">
+                        <input type="checkbox" name="banda_LTE 2600" id="banda_lte2600">
+                        <label for="banda_lte2600">LTE 2600 MHz</label>
+                    </div>
+                </div>
+            </section>
+
+            <div class="button-group">
+                <button type="submit" class="btn btn-primary">Calcular Cobertura</button>
+                <button type="button" class="btn btn-secondary" id="exportBtn">Descargar CSV</button>
+                <button type="button" class="btn btn-secondary" onclick="resetForm()">Reiniciar</button>
+            </div>
+        </form>
+    </div>
+
+    <div id="results" class="results-section" style="display: none;">
+        <h2>Resultados</h2>
+        
+        <div class="tabs">
+            <button class="tab-btn active" onclick="showTab(event, 'main')">LTE 1800 (Portadora Base)</button>
+            <button class="tab-btn" onclick="showTab(event, 'summary')">Resumen por Banda</button>
+            <button class="tab-btn" onclick="showTab(event, 'comparison')">Comparativa</button>
+        </div>
+
+        <div id="main" class="tab-content active">
+            <table id="mainTable" class="results-table">
+                <thead>
+                    <tr>
+                        <th>Punto</th>
+                        <th>Planta</th>
+                        <th>L_ext</th>
+                        <th>L_fachada</th>
+                        <th>L_pared</th>
+                        <th>L_forjado</th>
+                        <th>L_extra</th>
+                        <th>L_total</th>
+                        <th>P_rx [dBm]</th>
+                        <th>Estado</th>
+                        <th>Recomendación</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <div id="summary" class="tab-content">
+            <table id="summaryTable" class="results-table">
+                <thead>
+                    <tr>
+                        <th>Punto</th>
+                        <th>Banda</th>
+                        <th>P_rx [dBm]</th>
+                        <th>Estado</th>
+                        <th>Recomendación</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <div id="comparison" class="tab-content">
+            <table id="comparisonTable" class="results-table">
+                <thead></thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="errorMsg" class="error-msg" style="display: none;"></div>
+</div>
+
+<script>
+const points = {{ points|tojson }};
+const maxUmbralDatos = {{ data_threshold }};
+const maxUmbralVoz = {{ voice_threshold }};
+
+function renderPoints() {
+    const numPoints = parseInt(document.getElementById('numPoints').value);
+    const container = document.getElementById('pointsContainer');
+    container.innerHTML = '';
+    
+    for (let i = 0; i < numPoints; i++) {
+        const p = points[i] || {
+            nombre: `Punto ${i+1}`,
+            planta: 'Baja',
+            altura_m: 1.5,
+            dist_h_m: 180,
+            fachada_db: 14,
+            paredes_db: 0,
+            forjados_db: 0,
+            extra_db: 0
+        };
+        
+        const pointHTML = `
+            <div class="point-form">
+                <h4>Punto ${i+1}</h4>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Nombre:</label>
+                        <input type="text" name="punto_${i}_nombre" value="${p.nombre}">
+                    </div>
+                    <div class="form-group">
+                        <label>Planta:</label>
+                        <input type="text" name="punto_${i}_planta" value="${p.planta}">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Altura [m]:</label>
+                        <input type="number" step="0.5" name="punto_${i}_altura" value="${p.altura_m}">
+                    </div>
+                    <div class="form-group">
+                        <label>Distancia horiz. [m]:</label>
+                        <input type="number" step="1" name="punto_${i}_dist" value="${p.dist_h_m}">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Fachada [dB]:</label>
+                        <input type="number" step="0.5" name="punto_${i}_fachada" value="${p.fachada_db}">
+                    </div>
+                    <div class="form-group">
+                        <label>Paredes [dB]:</label>
+                        <input type="number" step="0.5" name="punto_${i}_paredes" value="${p.paredes_db}">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Forjados [dB]:</label>
+                        <input type="number" step="0.5" name="punto_${i}_forjados" value="${p.forjados_db}">
+                    </div>
+                    <div class="form-group">
+                        <label>Extra [dB]:</label>
+                        <input type="number" step="0.5" name="punto_${i}_extra" value="${p.extra_db}">
+                    </div>
+                </div>
+            </div>
+        `;
+        container.innerHTML += pointHTML;
+    }
+}
+
+document.getElementById('numPoints').addEventListener('change', renderPoints);
+renderPoints();
+
+document.getElementById('coverageForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const formData = new FormData(document.getElementById('coverageForm'));
+    const data = {};
+    
+    // Convertir FormData a objeto
+    for (let [key, value] of formData.entries()) {
+        data[key] = value;
+    }
+    
+    try {
+        const response = await fetch('/api/calculate', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(data)
+        });
+        
+        if (!response.ok) throw new Error('Error en cálculo');
+        
+        const results = await response.json();
+        displayResults(results);
+        document.getElementById('results').style.display = 'block';
+        document.getElementById('errorMsg').style.display = 'none';
+    } catch (error) {
+        document.getElementById('errorMsg').textContent = error.message;
+        document.getElementById('errorMsg').style.display = 'block';
+    }
+});
+
+function displayResults(results) {
+    // Tabla principal (LTE 1800)
+    if (results.main && results.main.length) {
+        const tbody = document.querySelector('#mainTable tbody');
+        tbody.innerHTML = results.main.map(r => `
+            <tr>
+                <td>${r.punto}</td>
+                <td>${r.planta}</td>
+                <td>${r.L_ext_db}</td>
+                <td>${r.L_fachada_db}</td>
+                <td>${r.L_paredes_db}</td>
+                <td>${r.L_forjados_db}</td>
+                <td>${r.L_extra_db}</td>
+                <td>${r.L_total_db}</td>
+                <td class="value-${r.P_rx_dbm > maxUmbralDatos ? 'good' : r.P_rx_dbm > maxUmbralVoz ? 'warn' : 'bad'}">${r.P_rx_dbm}</td>
+                <td>${r.estado}</td>
+                <td>${r.recomendacion}</td>
+            </tr>
+        `).join('');
+    }
+    
+    // Tabla resumen
+    if (results.summary && results.summary.length) {
+        const tbody = document.querySelector('#summaryTable tbody');
+        tbody.innerHTML = results.summary.map(r => `
+            <tr>
+                <td>${r.punto}</td>
+                <td>${r.banda}</td>
+                <td class="value-${r.P_rx_dbm > maxUmbralDatos ? 'good' : r.P_rx_dbm > maxUmbralVoz ? 'warn' : 'bad'}">${r.P_rx_dbm}</td>
+                <td>${r.estado}</td>
+                <td>${r.recomendacion}</td>
+            </tr>
+        `).join('');
+    }
+    
+    // Tabla comparativa
+    if (results.comparison && Object.keys(results.comparison).length) {
+        const thead = document.querySelector('#comparisonTable thead');
+        const tbody = document.querySelector('#comparisonTable tbody');
+        const firstPoint = Object.keys(results.comparison)[0];
+        const bands = Object.keys(results.comparison[firstPoint]).sort();
+        
+        thead.innerHTML = `<tr><th>Punto</th>${bands.map(b => `<th>${b}</th>`).join('')}</tr>`;
+        
+        tbody.innerHTML = Object.entries(results.comparison).map(([punto, values]) => `
+            <tr>
+                <td><strong>${punto}</strong></td>
+                ${bands.map(b => `<td class="value-${values[b] > maxUmbralDatos ? 'good' : values[b] > maxUmbralVoz ? 'warn' : 'bad'}">${values[b]}</td>`).join('')}
+            </tr>
+        `).join('');
+    }
+}
+
+function showTab(event, tabName) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(tabName).classList.add('active');
+    event.target.classList.add('active');
+}
+
+document.getElementById('exportBtn').addEventListener('click', exportToCSV);
+
+function exportToCSV() {
+    const formData = new FormData(document.getElementById('coverageForm'));
+    const data = {};
+    for (let [key, value] of formData.entries()) {
+        data[key] = value;
+    }
+    
+    fetch('/api/export-csv', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+    })
+    .then(r => r.blob())
+    .then(blob => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'resultados_cobertura.csv';
+        a.click();
+    });
+}
+
+function resetForm() {
+    document.getElementById('coverageForm').reset();
+    document.getElementById('results').style.display = 'none';
+    renderPoints();
+}
+</script>
+{% endblock %}
